@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "262524370747",
+    "project_id": "starttech-qr",
+    "storage_bucket": "starttech-qr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:262524370747:android:bd46e5d727a38b9cfac11e",
+        "android_client_info": {
+          "package_name": "com.example.starttech_qr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvGzVqSKsNIDq2YLW3lI29W6dnsCHMgrk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

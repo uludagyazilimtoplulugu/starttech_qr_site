@@ -120,7 +120,7 @@ class DialogHelper {
                         ),
                         fixedSize: Size(
                           MediaQuery.of(context).size.width * 0.65,
-                          MediaQuery.of(context).size.height * 0.06,
+                          MediaQuery.of(context).size.height * 0.065,
                         ),
                       ),
                       onPressed: () {

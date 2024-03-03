@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:starttech_qr/auth/enter_name.dart';
-import 'package:starttech_qr/auth/welcome_page.dart';
-import 'package:starttech_qr/home.dart';
 import 'package:starttech_qr/main.dart';
+import 'package:starttech_qr/models/user.dart';
+import 'package:starttech_qr/screens/auth/enter_name.dart';
+import 'package:starttech_qr/screens/auth/welcome_page.dart';
+import 'package:starttech_qr/screens/tabbar_main.dart';
+import 'package:starttech_qr/services/firestore_service.dart';
 
 class YonlendirmePage extends StatefulWidget {
   const YonlendirmePage({super.key});
@@ -34,23 +37,39 @@ class _YonlendirmePageState extends State<YonlendirmePage> {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      if (FirebaseAuth.instance.currentUser!.displayName.toString() == 'null' ||
-          FirebaseAuth.instance.currentUser!.displayName!.toString().isEmpty) {
-        Navigator.pushAndRemoveUntil(
+      bool userExists = await FirestoreService().checkUserWithUid(user.uid);
+      if (userExists) {
+        FirestoreUser? firestoreUser = await FirestoreService().getUser(
+          uid: user.uid,
+        );
+
+        debugPrint('firestoreUser name: ${firestoreUser!.name}');
+        if (firestoreUser.name == 'null' || firestoreUser.name.isEmpty) {
+          Navigator.pushAndRemoveUntil(
             GlobalcontextService.navigatorKey.currentContext!,
-            MaterialPageRoute(builder: (context) => const EnterNamePage()),
-            (route) => false);
+            CupertinoPageRoute(builder: (context) => const EnterNamePage()),
+            (route) => false,
+          );
+        } else {
+          Navigator.pushAndRemoveUntil(
+            GlobalcontextService.navigatorKey.currentContext!,
+            CupertinoPageRoute(builder: (context) => const TabBarMain()),
+            (route) => false,
+          );
+        }
       } else {
         Navigator.pushAndRemoveUntil(
-            GlobalcontextService.navigatorKey.currentContext!,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-            (route) => false);
+          GlobalcontextService.navigatorKey.currentContext!,
+          CupertinoPageRoute(builder: (context) => const EnterNamePage()),
+          (route) => false,
+        );
       }
     } else {
       Navigator.pushAndRemoveUntil(
-          GlobalcontextService.navigatorKey.currentContext!,
-          MaterialPageRoute(builder: (context) => const WelcomePage()),
-          (route) => false);
+        GlobalcontextService.navigatorKey.currentContext!,
+        CupertinoPageRoute(builder: (context) => const WelcomePage()),
+        (route) => false,
+      );
     }
   }
 }

@@ -1,0 +1,214 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:starttech_qr/helpers/space.dart';
+
+class HomePage extends ConsumerStatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          minimumSize: Size(
+            MediaQuery.of(context).size.width * 0.4,
+            MediaQuery.of(context).size.height * 0.07,
+          ),
+        ),
+        onPressed: () {
+          FirebaseAuth.instance.signOut();
+        },
+        child: Text(
+          'Nasıl Çalışır?',
+          style: GoogleFonts.poppins(
+            fontSize: MediaQuery.of(context).size.width * 0.04,
+            fontWeight: FontWeight.w400,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      resizeToAvoidBottomInset: false,
+      backgroundColor: const Color(0xff1A1A1A),
+      body: Column(
+        children: [
+          logo(context),
+          bigTitle(context),
+          SpaceHelper.boslukHeight(context, 0.006),
+          subtitle(context),
+          SpaceHelper.boslukHeight(context, 0.05),
+          qrOkutBtn(context),
+          SpaceHelper.boslukHeight(context, 0.02),
+          qrKoduOlusturBtn(context),
+          SpaceHelper.boslukHeight(context, 0.01),
+          communityLogos(context),
+        ],
+      ),
+    );
+  }
+
+  Row subtitle(BuildContext context) {
+    return Row(
+      children: [
+        SpaceHelper.boslukWidth(context, 0.05),
+        Expanded(
+          child: Text(
+            'Bu sayfada sana ait olan QR kodunu görebilir ve yeni tanıştığın kişilerin QR kodunu okutarak onları ekleyebilirsin.'
+            '\n\nUnutma, en çok puan alan kişi büyük ödülün sahibi olur.',
+            overflow: TextOverflow.clip,
+            style: GoogleFonts.poppins(
+              fontSize: MediaQuery.of(context).size.width * 0.03,
+              fontWeight: FontWeight.w400,
+              color: Colors.white.withOpacity(0.8),
+            ),
+          ),
+        ),
+        SpaceHelper.boslukWidth(context, 0.05),
+      ],
+    );
+  }
+
+  Row bigTitle(BuildContext context) {
+    return Row(
+      children: [
+        SpaceHelper.boslukWidth(context, 0.05),
+        Text(
+          'Selam, ${FirebaseAuth.instance.currentUser!.displayName} ',
+          style: GoogleFonts.poppins(
+            fontSize: MediaQuery.of(context).size.width * 0.07,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  qrOkutBtn(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        minimumSize: Size(
+          MediaQuery.of(context).size.width * 0.9,
+          MediaQuery.of(context).size.height * 0.09,
+        ),
+      ),
+      onPressed: () {
+        // qr okutma işlemi
+      },
+      child: Text(
+        'QR Kod Okut',
+        style: GoogleFonts.poppins(
+          fontSize: MediaQuery.of(context).size.width * 0.04,
+          fontWeight: FontWeight.w400,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  qrKoduOlusturBtn(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        minimumSize: Size(
+          MediaQuery.of(context).size.width * 0.9,
+          MediaQuery.of(context).size.height * 0.09,
+        ),
+      ),
+      onPressed: () {
+        // qr kodu oluşturma işlemi
+      },
+      child: Text(
+        'QR Kod Göster',
+        style: GoogleFonts.poppins(
+          fontSize: MediaQuery.of(context).size.width * 0.04,
+          fontWeight: FontWeight.w400,
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+
+  logo(BuildContext context) {
+    return Image.asset(
+      'assets/images/startech.png',
+      width: MediaQuery.of(context).size.width * 0.5,
+      height: MediaQuery.of(context).size.height * 0.2,
+    );
+  }
+
+  communityLogos(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.4,
+          height: MediaQuery.of(context).size.height * 0.2,
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/uudevlogo_beyaz.png',
+                width: MediaQuery.of(context).size.width * 0.1,
+                height: MediaQuery.of(context).size.height * 0.1,
+              ),
+              Text(
+                'Uludağ Yazılım Topluluğu',
+                overflow: TextOverflow.clip,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.4,
+          height: MediaQuery.of(context).size.height * 0.2,
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/gdgcloudbursalogo.png',
+                width: MediaQuery.of(context).size.width * 0.1,
+                height: MediaQuery.of(context).size.height * 0.1,
+              ),
+              Text(
+                'Google DSC Uludag University',
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.clip,
+                style: GoogleFonts.poppins(
+                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+}

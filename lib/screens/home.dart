@@ -17,6 +17,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: const Color(0xff1A1A1A),
       floatingActionButton: ElevatedButton(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -32,7 +34,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           FirebaseAuth.instance.signOut();
         },
         child: Text(
-          'Nasıl Çalışır?',
+          'Nasıl çalışır?',
           style: GoogleFonts.poppins(
             fontSize: MediaQuery.of(context).size.width * 0.04,
             fontWeight: FontWeight.w400,
@@ -40,8 +42,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ),
       ),
-      resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xff1A1A1A),
       body: Column(
         children: [
           logo(context),
@@ -69,7 +69,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             '\n\nUnutma, en çok puan alan kişi büyük ödülün sahibi olur.',
             overflow: TextOverflow.clip,
             style: GoogleFonts.poppins(
-              fontSize: MediaQuery.of(context).size.width * 0.03,
+              fontSize: MediaQuery.of(context).size.width * 0.027,
               fontWeight: FontWeight.w400,
               color: Colors.white.withOpacity(0.8),
             ),
@@ -85,15 +85,26 @@ class _HomePageState extends ConsumerState<HomePage> {
       children: [
         SpaceHelper.boslukWidth(context, 0.05),
         Text(
-          'Selam, ${FirebaseAuth.instance.currentUser!.displayName} ',
+          'Selam, ${getName()}',
           style: GoogleFonts.poppins(
-            fontSize: MediaQuery.of(context).size.width * 0.07,
+            fontSize: MediaQuery.of(context).size.width * 0.05,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
         ),
       ],
     );
+  }
+
+  getName() {
+    FirebaseAuth.instance.currentUser!.reload();
+    List<String> name =
+        FirebaseAuth.instance.currentUser!.displayName!.split(' ');
+    if (name.length > 1) {
+      return name[0];
+    } else {
+      return FirebaseAuth.instance.currentUser!.displayName;
+    }
   }
 
   qrOkutBtn(BuildContext context) {
@@ -105,7 +116,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
         minimumSize: Size(
           MediaQuery.of(context).size.width * 0.9,
-          MediaQuery.of(context).size.height * 0.09,
+          MediaQuery.of(context).size.height * 0.075,
         ),
       ),
       onPressed: () {
@@ -132,7 +143,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
         minimumSize: Size(
           MediaQuery.of(context).size.width * 0.9,
-          MediaQuery.of(context).size.height * 0.09,
+          MediaQuery.of(context).size.height * 0.075,
         ),
       ),
       onPressed: () {

@@ -222,9 +222,9 @@ class _VerifyNumberPageState extends ConsumerState<VerifyNumberPage> {
               verificationId: widget.verificationId, smsCode: controller.text))
           .then((value) async {
         if (value.user != null) {
-          await FirebaseAuth.instance.signInWithPhoneNumber(
-            widget.phoneNumber.replaceAll(' ', ''),
-          );
+          // await FirebaseAuth.instance.signInWithPhoneNumber(
+          //   widget.phoneNumber.replaceAll(' ', ''),
+          // );
           setState(() {
             isLoading = false;
           });

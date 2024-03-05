@@ -3,16 +3,17 @@ import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+
+import 'package:image_picker_web/image_picker_web.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler_web/permission_handler_web.dart';
 // import 'package:image_picker_web/image_picker_web.dart';
 
 import 'package:starttech_qr/helpers/dialog.dart';
 import 'package:starttech_qr/helpers/space.dart';
 import 'package:starttech_qr/main.dart';
-import 'package:starttech_qr/models/user.dart';
 import 'package:starttech_qr/services/firestore_service.dart';
 import 'package:starttech_qr/services/storage_service.dart';
 import 'package:starttech_qr/yonlendirme.dart';
@@ -28,6 +29,7 @@ class EditProfilePage extends ConsumerStatefulWidget {
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   TextEditingController nameController = TextEditingController();
   bool isLoading = false;
+
   Uint8List webImage = Uint8List(8);
 
   @override
@@ -71,96 +73,65 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       ),
       body: Stack(
         children: [
-          FutureBuilder(
-            future: FirestoreService()
-                .getUser(uid: FirebaseAuth.instance.currentUser!.uid),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    'Bir hata oluştu: ${snapshot.error}',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: MediaQuery.of(context).size.width * 0.04,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white,
-                    ),
-                  ),
-                );
-              }
-              if (snapshot.hasData) {
-                FirestoreUser? user = snapshot.data;
-                if (user == null) {
-                  return const Text('Kullanıcı bulunamadı');
-                }
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      img(context),
-                      SpaceHelper.boslukHeight(context, 0.02),
-                      _fotoyuDegistirText,
-                      SpaceHelper.boslukHeight(context, 0.03),
-                      nameField(context),
-                      SpaceHelper.boslukHeight(context, 0.03),
-                      FirebaseAuth.instance.currentUser!.email != null
-                          ? Column(
-                              children: [
-                                emailField(context),
-                                Row(
-                                  children: [
-                                    SpaceHelper.boslukWidth(context, 0.05),
-                                    Expanded(
-                                      child: Text(
-                                        'Mail adresi değiştirilemez.',
-                                        overflow: TextOverflow.clip,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.035,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                    ),
-                                    SpaceHelper.boslukWidth(context, 0.05),
-                                  ],
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                img(context),
+                SpaceHelper.boslukHeight(context, 0.02),
+                _fotoyuDegistirText,
+                SpaceHelper.boslukHeight(context, 0.03),
+                nameField(context),
+                SpaceHelper.boslukHeight(context, 0.03),
+                FirebaseAuth.instance.currentUser!.email != null
+                    ? Column(
+                        children: [
+                          emailField(context),
+                          Row(
+                            children: [
+                              SpaceHelper.boslukWidth(context, 0.05),
+                              Expanded(
+                                child: Text(
+                                  'Mail adresi değiştirilemez.',
+                                  overflow: TextOverflow.clip,
+                                  style: GoogleFonts.poppins(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.035,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white70,
+                                  ),
                                 ),
-                              ],
-                            )
-                          : Column(
-                              children: [
-                                numberField(context),
-                                Row(
-                                  children: [
-                                    SpaceHelper.boslukWidth(context, 0.05),
-                                    Text(
-                                      'Telefon numarası değiştirilemez.',
-                                      overflow: TextOverflow.clip,
-                                      style: GoogleFonts.poppins(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.035,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                    SpaceHelper.boslukWidth(context, 0.05),
-                                  ],
+                              ),
+                              SpaceHelper.boslukWidth(context, 0.05),
+                            ],
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          numberField(context),
+                          Row(
+                            children: [
+                              SpaceHelper.boslukWidth(context, 0.05),
+                              Text(
+                                'Telefon numarası değiştirilemez.',
+                                overflow: TextOverflow.clip,
+                                style: GoogleFonts.poppins(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.035,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white70,
                                 ),
-                              ],
-                            ),
-                      SpaceHelper.boslukHeight(context, 0.03),
-                      updateBtn(context),
-                    ],
-                  ),
-                );
-              }
-              return const Text('Kullanıcı bulunamadı');
-            },
+                              ),
+                              SpaceHelper.boslukWidth(context, 0.05),
+                            ],
+                          ),
+                        ],
+                      ),
+                SpaceHelper.boslukHeight(context, 0.03),
+                updateBtn(context),
+              ],
+            ),
           ),
           loadingWidget(),
         ],
@@ -300,11 +271,19 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   _galeridenSec() async {
-    var image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    var f = await image!.readAsBytes();
+    // var image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    // var f = await image!.readAsBytes();
+
+    await PermissionHandlerWeb().requestPermissions([
+      Permission.camera,
+      Permission.microphone,
+      Permission.photos,
+    ]);
+
+    Uint8List? bytesFromPicker = await ImagePickerWeb.getImageAsBytes();
 
     setState(() {
-      webImage = f;
+      webImage = bytesFromPicker!;
     });
   }
 

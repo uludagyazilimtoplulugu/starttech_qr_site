@@ -206,4 +206,20 @@ class FirestoreService {
       'scannedQrCodes': FieldValue.arrayUnion([scannedQrCode]),
     });
   }
+
+  // send feedback
+  Future<void> sendFeedback({
+    required String uid,
+    required String feedback,
+  }) async {
+    await _db.collection('feedbacks').add({
+      'uid': uid,
+      'name': FirebaseAuth.instance.currentUser!.displayName,
+      'photoUrl': FirebaseAuth.instance.currentUser!.photoURL,
+      'email': FirebaseAuth.instance.currentUser!.email,
+      'phoneNumber': FirebaseAuth.instance.currentUser!.phoneNumber,
+      'feedback': feedback,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
 }

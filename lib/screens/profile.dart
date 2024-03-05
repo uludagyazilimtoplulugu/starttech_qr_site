@@ -1,17 +1,17 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_web_libraries_in_flutter
 
 import 'dart:js' as js;
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:starttech_qr/helpers/space.dart';
 import 'package:starttech_qr/main.dart';
 import 'package:starttech_qr/screens/auth/welcome_page.dart';
 import 'package:starttech_qr/screens/edit_profile.dart';
+import 'package:starttech_qr/screens/feedback.dart';
 import 'package:starttech_qr/screens/profile_qr/scanned_qrs.dart';
 import 'package:starttech_qr/services/firestore_service.dart';
 
@@ -59,15 +59,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             SpaceHelper.boslukHeight(context, 0.01),
             subtitle(context),
             SpaceHelper.boslukHeight(context, 0.05),
-            settings1text(context),
+            settingsText(context, 'QR'),
             SpaceHelper.boslukHeight(context, 0.01),
             settings1container(context),
             SpaceHelper.boslukHeight(context, 0.05),
-            settings2text(context),
+            settingsText(context, 'SOSYAL MEDYA HESAPLARI'),
             SpaceHelper.boslukHeight(context, 0.01),
             settings2container(context),
             SpaceHelper.boslukHeight(context, 0.01),
-            settings2subtext(context),
+            settingsSubtext(
+                context, 'Bizi sosyal medyadan takip etmeyi unutmayın!'),
+            SpaceHelper.boslukHeight(context, 0.05),
+            settingsText(context, 'FEEDBACK'),
+            SpaceHelper.boslukHeight(context, 0.01),
+            settings3container(context),
+            SpaceHelper.boslukHeight(context, 0.01),
+            settingsSubtext(
+                context, 'Etkinliği ve siteyi değerlendirebilirsiniz.'),
             SpaceHelper.boslukHeight(context, 0.05),
             signOutBtn(context),
             SpaceHelper.boslukHeight(context, 0.05),
@@ -181,13 +189,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Row settings2subtext(BuildContext context) {
+  Row settingsSubtext(BuildContext context, String text) {
     return Row(
       children: [
         SpaceHelper.boslukWidth(context, 0.07),
         Expanded(
           child: Text(
-            'Bizi sosyal medyadan takip etmeyi unutmayın!',
+            text,
             overflow: TextOverflow.clip,
             style: GoogleFonts.poppins(
               color: Colors.white54,
@@ -285,12 +293,68 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Row settings2text(BuildContext context) {
+  Row settings3container(BuildContext context) {
+    return Row(
+      children: [
+        SpaceHelper.boslukWidth(context, 0.04),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey.withOpacity(0.07),
+            ),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => const FeedbackPage(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 13, 8, 13),
+                    child: Row(
+                      children: [
+                        SpaceHelper.boslukWidth(context, 0.03),
+                        Text(
+                          'Feedback Gönder',
+                          overflow: TextOverflow.clip,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: MediaQuery.of(context).size.width * 0.036,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        // ios forward button
+                        const Spacer(),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white54,
+                          size: 15,
+                        ),
+                        SpaceHelper.boslukWidth(context, 0.03),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SpaceHelper.boslukWidth(context, 0.04),
+      ],
+    );
+  }
+
+  Row settingsText(BuildContext context, String text) {
     return Row(
       children: [
         SpaceHelper.boslukWidth(context, 0.07),
         Text(
-          'SOSYAL MEDYA HESAPLARI',
+          text,
           style: GoogleFonts.poppins(
             color: Colors.white54,
             fontSize: MediaQuery.of(context).size.width * 0.033,
@@ -365,7 +429,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       children: [
                         SpaceHelper.boslukWidth(context, 0.03),
                         Text(
-                          'QR Kodunu Okuduklarım',
+                          'Okunan QR Kodlarım',
                           style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontSize: MediaQuery.of(context).size.width * 0.036,
@@ -389,22 +453,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ),
         ),
         SpaceHelper.boslukWidth(context, 0.04),
-      ],
-    );
-  }
-
-  Row settings1text(BuildContext context) {
-    return Row(
-      children: [
-        SpaceHelper.boslukWidth(context, 0.07),
-        Text(
-          'QR',
-          style: GoogleFonts.poppins(
-            color: Colors.white54,
-            fontSize: MediaQuery.of(context).size.width * 0.033,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
       ],
     );
   }
@@ -446,7 +494,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               if (loadingProgress == null) {
                 return child;
               } else {
-                return const CircularProgressIndicator();
+                return const CircularProgressIndicator(
+                  color: Colors.white,
+                );
               }
             },
             errorBuilder:

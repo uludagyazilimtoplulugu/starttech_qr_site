@@ -298,7 +298,7 @@ class DialogHelper {
               SpaceHelper.boslukHeight(context, 0.023),
               Icon(
                 FontAwesomeIcons.circleCheck,
-                color: Colors.white,
+                color: Colors.green,
                 size: MediaQuery.of(context).size.height * 0.05,
               ),
               SpaceHelper.boslukHeight(context, 0.023),
@@ -330,7 +330,7 @@ class DialogHelper {
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                        backgroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

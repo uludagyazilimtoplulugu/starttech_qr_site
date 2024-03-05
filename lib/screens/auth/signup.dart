@@ -13,6 +13,7 @@ import 'package:starttech_qr/screens/auth/email_signup.dart';
 import 'package:starttech_qr/screens/auth/verify_number.dart';
 import 'package:starttech_qr/screens/tabbar_main.dart';
 import 'package:starttech_qr/services/auth_service.dart';
+import 'package:starttech_qr/services/firestore_service.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
@@ -172,16 +173,41 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
       });
       await AuthService().signInWithGoogle();
 
-      setState(() {
-        isLoading = false;
-      });
-      Navigator.pushAndRemoveUntil(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => const TabBarMain(),
-        ),
-        (route) => false,
+      bool userExists = await FirestoreService().checkUserWithUid(
+        FirebaseAuth.instance.currentUser!.uid,
       );
+      if (userExists) {
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => const TabBarMain(),
+          ),
+          (route) => false,
+        );
+      } else {
+        User? user = FirebaseAuth.instance.currentUser;
+        await FirestoreService().addUserToFirestore(
+          uid: user!.uid,
+          email: user.email.toString(),
+          name: user.displayName.toString(),
+          phoneNumber: user.phoneNumber.toString(),
+          photoUrl: user.photoURL.toString(),
+        );
+
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => const TabBarMain(),
+          ),
+          (route) => false,
+        );
+      }
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -199,16 +225,41 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
       });
       bool? signedIn = await AuthService().signInWithGithub();
       if (signedIn == true) {
-        setState(() {
-          isLoading = false;
-        });
-        Navigator.pushAndRemoveUntil(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => const TabBarMain(),
-          ),
-          (route) => false,
+        bool userExists = await FirestoreService().checkUserWithUid(
+          FirebaseAuth.instance.currentUser!.uid,
         );
+        if (userExists) {
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pushAndRemoveUntil(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => const TabBarMain(),
+            ),
+            (route) => false,
+          );
+        } else {
+          User? user = FirebaseAuth.instance.currentUser;
+          await FirestoreService().addUserToFirestore(
+            uid: user!.uid,
+            email: user.email.toString(),
+            name: user.displayName.toString(),
+            phoneNumber: user.phoneNumber.toString(),
+            photoUrl: user.photoURL.toString(),
+          );
+
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pushAndRemoveUntil(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => const TabBarMain(),
+            ),
+            (route) => false,
+          );
+        }
       } else {
         setState(() {
           isLoading = false;

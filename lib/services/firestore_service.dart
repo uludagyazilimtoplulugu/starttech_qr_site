@@ -156,12 +156,12 @@ class FirestoreService {
   }
 
   // kullanıcının qr kodunu taryana kullanıcılar
-  Future<List<FirestoreUser>> getScannedUsersWithQrCode({
-    required String qrCode,
-  }) async {
+  Future<List<FirestoreUser>> getScannedUsersWithQrCode() async {
+    FirestoreUser? user =
+        await getUser(uid: FirebaseAuth.instance.currentUser!.uid);
     var result = await _db
         .collection('users')
-        .where('scannedQrCodes', arrayContains: qrCode)
+        .where('scannedQrCodes', arrayContains: user!.qrCode)
         .get();
     List<FirestoreUser> users = [];
     for (var doc in result.docs) {

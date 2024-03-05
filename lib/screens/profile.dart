@@ -13,6 +13,7 @@ import 'package:starttech_qr/screens/auth/welcome_page.dart';
 import 'package:starttech_qr/screens/edit_profile.dart';
 import 'package:starttech_qr/screens/feedback.dart';
 import 'package:starttech_qr/screens/profile_qr/scanned_qrs.dart';
+import 'package:starttech_qr/screens/profile_qr/users_scanned_my_qr.dart';
 import 'package:starttech_qr/services/firestore_service.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -382,7 +383,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (context) => const ScannedQRCodesPage(),
+                        builder: (context) => const UsersScannesMyQRPage(),
                       ),
                     );
                   },

@@ -33,6 +33,8 @@ class _ScannedQRCodesPageState extends ConsumerState<ScannedQRCodesPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xff1A1A1A),
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true,
         bottom: TabBar(
@@ -121,19 +123,21 @@ class _ScannedQRCodesPageState extends ConsumerState<ScannedQRCodesPage>
                   title: Text(
                     users[index].name,
                     style: GoogleFonts.poppins(
-                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      fontSize: MediaQuery.of(context).size.width * 0.038,
                       fontWeight: FontWeight.w400,
                       color: Colors.white,
                     ),
                   ),
-                  subtitle: Text(
-                    users[index].email == 'null' ? '' : users[index].email,
-                    style: GoogleFonts.poppins(
-                      fontSize: MediaQuery.of(context).size.width * 0.03,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white30,
-                    ),
-                  ),
+                  subtitle: users[index].email.toString() == 'null'
+                      ? null
+                      : Text(
+                          users[index].email,
+                          style: GoogleFonts.poppins(
+                            fontSize: MediaQuery.of(context).size.width * 0.035,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white38,
+                          ),
+                        ),
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(

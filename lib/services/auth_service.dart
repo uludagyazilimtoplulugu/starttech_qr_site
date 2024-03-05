@@ -72,15 +72,6 @@ class AuthService {
     await _firebaseAuth.currentUser!.reauthenticateWithCredential(credential);
     await FirebaseAuth.instance.currentUser!.reload();
 
-    User? user = FirebaseAuth.instance.currentUser;
-    await FirestoreService().addUserToFirestore(
-      uid: user!.uid,
-      email: user.email.toString(),
-      name: user.displayName.toString(),
-      phoneNumber: user.phoneNumber.toString(),
-      photoUrl: user.photoURL.toString(),
-    );
-
     return authResult.user != null;
   }
 
@@ -122,15 +113,6 @@ class AuthService {
     await _firebaseAuth.signInWithPopup(githubProvider);
 
     await FirebaseAuth.instance.currentUser!.reload();
-
-    User? user = FirebaseAuth.instance.currentUser;
-    await FirestoreService().addUserToFirestore(
-      uid: user!.uid,
-      email: user.email.toString(),
-      name: user.displayName.toString(),
-      phoneNumber: user.phoneNumber.toString(),
-      photoUrl: user.photoURL.toString(),
-    );
 
     return _firebaseAuth.currentUser != null;
   }

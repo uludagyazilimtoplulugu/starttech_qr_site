@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'Material App',
       theme: ThemeData.dark(),
       home: const YonlendirmePage(),
+      // home: ScannedQRCodesPage(),
     );
   }
 }

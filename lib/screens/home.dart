@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:starttech_qr/helpers/space.dart';
+import 'package:starttech_qr/screens/qr.dart';
+import 'package:starttech_qr/screens/qr_scan.dart';
+import 'package:starttech_qr/services/firestore_service.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -13,48 +15,77 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends ConsumerState<HomePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xff1A1A1A),
-      floatingActionButton: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    super.build(context);
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: const Color(0xff1A1A1A),
+        floatingActionButton: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            minimumSize: Size(
+              MediaQuery.of(context).size.width * 0.4,
+              MediaQuery.of(context).size.height * 0.07,
+            ),
           ),
-          minimumSize: Size(
-            MediaQuery.of(context).size.width * 0.4,
-            MediaQuery.of(context).size.height * 0.07,
+          onPressed: () {},
+          child: Text(
+            'Nasıl çalışır?',
+            style: GoogleFonts.poppins(
+              fontSize: MediaQuery.of(context).size.width * 0.04,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
+            ),
           ),
         ),
-        onPressed: () {
-          FirebaseAuth.instance.signOut();
-        },
-        child: Text(
-          'Nasıl çalışır?',
-          style: GoogleFonts.poppins(
-            fontSize: MediaQuery.of(context).size.width * 0.04,
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-          ),
+        body: Column(
+          children: [
+            logo(context),
+            bigTitle(context),
+            StreamBuilder(
+              stream: FirestoreService()
+                  .streamPoint(uid: FirebaseAuth.instance.currentUser!.uid),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  return Row(
+                    children: [
+                      SpaceHelper.boslukWidth(context, 0.05),
+                      Text(
+                        "Puanın: ${snapshot.data}",
+                        style: GoogleFonts.poppins(
+                          color: Colors.white70,
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
+            SpaceHelper.boslukHeight(context, 0.006),
+            subtitle(context),
+            SpaceHelper.boslukHeight(context, 0.05),
+            qrOkutBtn(context),
+            SpaceHelper.boslukHeight(context, 0.02),
+            qrKoduOlusturBtn(context),
+            SpaceHelper.boslukHeight(context, 0.01),
+            communityLogos(context),
+          ],
         ),
-      ),
-      body: Column(
-        children: [
-          logo(context),
-          bigTitle(context),
-          SpaceHelper.boslukHeight(context, 0.006),
-          subtitle(context),
-          SpaceHelper.boslukHeight(context, 0.05),
-          qrOkutBtn(context),
-          SpaceHelper.boslukHeight(context, 0.02),
-          qrKoduOlusturBtn(context),
-          SpaceHelper.boslukHeight(context, 0.01),
-          communityLogos(context),
-        ],
       ),
     );
   }
@@ -120,7 +151,12 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
       ),
       onPressed: () {
-        // qr okutma işlemi
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => const QRScanPage(),
+          ),
+        );
       },
       child: Text(
         'QR Kod Okut',
@@ -147,7 +183,12 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
       ),
       onPressed: () {
-        // qr kodu oluşturma işlemi
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => const QRPage(),
+          ),
+        );
       },
       child: Text(
         'QR Kod Göster',

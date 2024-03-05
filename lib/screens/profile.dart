@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:starttech_qr/helpers/space.dart';
 import 'package:starttech_qr/main.dart';
 import 'package:starttech_qr/screens/auth/welcome_page.dart';
+import 'package:starttech_qr/screens/edit_profile.dart';
 import 'package:starttech_qr/screens/profile_qr/scanned_qrs.dart';
 import 'package:starttech_qr/services/firestore_service.dart';
 
@@ -432,30 +433,66 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  ClipRRect img(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Image.network(
-        FirebaseAuth.instance.currentUser!.photoURL ??
-            "https://api.dicebear.com/7.x/adventurer-neutral/png?seed=${FirebaseAuth.instance.currentUser!.uid}",
-        loadingBuilder: (BuildContext context, Widget child,
-            ImageChunkEvent? loadingProgress) {
-          if (loadingProgress == null) {
-            return child;
-          } else {
-            return const CircularProgressIndicator();
-          }
-        },
-        errorBuilder:
-            (BuildContext context, Object error, StackTrace? stackTrace) {
-          return const Icon(
-            Icons.error,
-            color: Colors.red,
-          );
-        },
-        height: MediaQuery.of(context).size.height * 0.18,
-        fit: BoxFit.cover,
-      ),
+  Widget img(BuildContext context) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.network(
+            FirebaseAuth.instance.currentUser!.photoURL ??
+                "https://api.dicebear.com/7.x/adventurer-neutral/png?seed=${FirebaseAuth.instance.currentUser!.uid}",
+            loadingBuilder: (BuildContext context, Widget child,
+                ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) {
+                return child;
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace? stackTrace) {
+              debugPrint('error: $error');
+              debugPrint(FirebaseAuth.instance.currentUser!.photoURL!);
+              return const Icon(
+                Icons.error,
+                color: Colors.red,
+              );
+            },
+            height: MediaQuery.of(context).size.height * 0.18,
+            width: MediaQuery.of(context).size.height * 0.18,
+            fit: BoxFit.cover,
+          ),
+        ),
+        // edit icon, top right
+        Positioned(
+          top: 2,
+          right: 2,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => const EditProfilePage(),
+                ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.edit,
+                  color: Colors.black,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

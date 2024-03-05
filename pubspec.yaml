@@ -57,6 +57,11 @@ dependencies:
   qr_bar_code_scanner_dialog: ^0.0.5
   flutter_web_qrcode_scanner: ^1.1.1
   confetti: ^0.7.0
+  firebase_storage: ^11.6.7
+  uuid: ^4.3.3
+  # image_picker_web: ^3.1.1
+  image_picker: ^0.8.5
+
   
 
 dev_dependencies:

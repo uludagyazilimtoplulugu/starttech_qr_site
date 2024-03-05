@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:starttech_qr/models/qr_code.dart';
 import 'package:starttech_qr/models/user.dart';
@@ -58,12 +59,15 @@ class FirestoreService {
     required String name,
     required String photoUrl,
   }) async {
+    await FirebaseAuth.instance.currentUser!.updateDisplayName(name);
+    await FirebaseAuth.instance.currentUser!.updatePhotoURL(photoUrl);
+
     await _db.collection('users').doc(id).update({
       'email': email,
       'phoneNumber': phoneNumber,
       'name': name,
       'photoUrl': photoUrl,
-      'updatedAt': FieldValue.serverTimestamp(),
+      'updatedAt': DateTime.now(),
     });
   }
 
@@ -85,7 +89,6 @@ class FirestoreService {
     required String uid,
     required String qrCode,
   }) async {
-    
     FirestoreUser? user = await getUser(uid: uid);
     for (var element in user!.scannedQrCodes) {
       if (element == qrCode) {

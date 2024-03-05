@@ -131,6 +131,9 @@ class _HomePageState extends ConsumerState<HomePage>
     FirebaseAuth.instance.currentUser!.reload();
     List<String> name =
         FirebaseAuth.instance.currentUser!.displayName!.split(' ');
+    if (FirebaseAuth.instance.currentUser!.displayName == null) {
+      return 'Kullanıcı';
+    }
     if (name.length > 1) {
       return name[0];
     } else {

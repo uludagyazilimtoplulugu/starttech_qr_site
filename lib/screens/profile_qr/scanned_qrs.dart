@@ -142,8 +142,9 @@ class _ScannedQRCodesPageState extends ConsumerState<ScannedQRCodesPage>
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       users[index].photoUrl,
-                      width: MediaQuery.of(context).size.width * 0.1,
-                      height: MediaQuery.of(context).size.width * 0.1,
+                      fit: BoxFit.cover,
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      height: MediaQuery.of(context).size.width * 0.18,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) {
                           return child;
@@ -176,18 +177,14 @@ class _ScannedQRCodesPageState extends ConsumerState<ScannedQRCodesPage>
 
   Widget get scannedStandsTab {
     return FutureBuilder(
-      future: FirestoreService().getCurrentUserScannedQrCodesFromQrCodes(
+      future: FirestoreService().getCurrentUserScannedQrCodesStant(
         uid: FirebaseAuth.instance.currentUser!.uid,
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           List<CustomQRCode>? qrCodes = snapshot.data;
-          for (var element in qrCodes!) {
-            if (element.type != 'stant') {
-              qrCodes.remove(element);
-            }
-          }
-          if (qrCodes.isEmpty) {
+
+          if (qrCodes!.isEmpty) {
             return Center(
               child: Text(
                 'Henüz hiçbir stant taranmamış.',
@@ -222,8 +219,9 @@ class _ScannedQRCodesPageState extends ConsumerState<ScannedQRCodesPage>
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       qrCodes[index].photoUrl,
-                      width: MediaQuery.of(context).size.width * 0.1,
-                      height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      height: MediaQuery.of(context).size.width * 0.18,
+                      fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) {
                           return child;
@@ -256,7 +254,7 @@ class _ScannedQRCodesPageState extends ConsumerState<ScannedQRCodesPage>
 
   Widget get scannedPresentationsTab {
     return FutureBuilder(
-      future: FirestoreService().getCurrentUserScannedQrCodesFromQrCodes(
+      future: FirestoreService().getCurrentUserScannedQrCodesSpeaker(
         uid: FirebaseAuth.instance.currentUser!.uid,
       ),
       builder: (context, snapshot) {
@@ -302,8 +300,9 @@ class _ScannedQRCodesPageState extends ConsumerState<ScannedQRCodesPage>
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       qrCodes[index].photoUrl,
-                      width: MediaQuery.of(context).size.width * 0.1,
-                      height: MediaQuery.of(context).size.width * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      height: MediaQuery.of(context).size.width * 0.18,
+                      fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) {
                           return child;

@@ -222,7 +222,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ),
             child: Column(
               children: [
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     js.context
                         .callMethod('open', ['https://linktr.ee/uludagdev']);
@@ -256,7 +256,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 Divider(
                   indent: MediaQuery.of(context).size.width * 0.03,
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     js.context.callMethod(
                         'open', ['https://www.instagram.com/gdsculudag']);
@@ -306,7 +306,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ),
             child: Column(
               children: [
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -378,7 +378,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ),
             child: Column(
               children: [
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -415,7 +415,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 Divider(
                   indent: MediaQuery.of(context).size.width * 0.03,
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -437,7 +437,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        // ios forward button
                         const Spacer(),
                         const Icon(
                           Icons.arrow_forward_ios,

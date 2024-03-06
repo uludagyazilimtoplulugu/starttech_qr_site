@@ -8,8 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:starttech_qr/helpers/dialog.dart';
 import 'package:starttech_qr/helpers/space.dart';
 import 'package:starttech_qr/main.dart';
-import 'package:starttech_qr/screens/home.dart';
 import 'package:starttech_qr/screens/scan_completed.dart';
+import 'package:starttech_qr/screens/tabbar_main.dart';
 
 class QRScanPage extends ConsumerStatefulWidget {
   const QRScanPage({super.key});
@@ -97,7 +97,7 @@ class _QRScanPageState extends ConsumerState<QRScanPage>
         Navigator.pushAndRemoveUntil(
           context,
           CupertinoPageRoute(
-            builder: (context) => const HomePage(),
+            builder: (context) => const TabBarMain(),
           ),
           (route) => false,
         );
@@ -224,7 +224,7 @@ class _QRScanPageState extends ConsumerState<QRScanPage>
               Navigator.pushAndRemoveUntil(
                 GlobalcontextService.navigatorKey.currentContext!,
                 CupertinoPageRoute(
-                  builder: (context) => const HomePage(),
+                  builder: (context) => const TabBarMain(),
                 ),
                 (route) => false,
               );

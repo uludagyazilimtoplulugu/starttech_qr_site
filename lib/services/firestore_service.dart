@@ -155,6 +155,44 @@ class FirestoreService {
     return qrCodes;
   }
 
+  // kullanıcının taradığı qr kodları, qr_codes collection'dan al
+  Future<List<CustomQRCode>> getCurrentUserScannedQrCodesSpeaker({
+    required String uid,
+  }) async {
+    FirestoreUser? user = await getUser(uid: uid);
+    List<CustomQRCode> qrCodes = [];
+    for (var qrCode in user!.scannedQrCodes) {
+      var result = await _db
+          .collection('qr_codes')
+          .where('qrCode', isEqualTo: qrCode)
+          .where('type', isEqualTo: 'speaker')
+          .get();
+      if (result.docs.isNotEmpty) {
+        qrCodes.add(CustomQRCode.fromDoc(result.docs.first));
+      }
+    }
+    return qrCodes;
+  }
+
+  // kullanıcının taradığı qr kodları, qr_codes collection'dan al
+  Future<List<CustomQRCode>> getCurrentUserScannedQrCodesStant({
+    required String uid,
+  }) async {
+    FirestoreUser? user = await getUser(uid: uid);
+    List<CustomQRCode> qrCodes = [];
+    for (var qrCode in user!.scannedQrCodes) {
+      var result = await _db
+          .collection('qr_codes')
+          .where('qrCode', isEqualTo: qrCode)
+          .where('type', isEqualTo: 'stant')
+          .get();
+      if (result.docs.isNotEmpty) {
+        qrCodes.add(CustomQRCode.fromDoc(result.docs.first));
+      }
+    }
+    return qrCodes;
+  }
+
   // kullanıcının qr kodunu taryana kullanıcılar
   Future<List<FirestoreUser>> getScannedUsersWithQrCode() async {
     FirestoreUser? user =

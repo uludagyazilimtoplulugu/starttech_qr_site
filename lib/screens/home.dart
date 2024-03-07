@@ -1,10 +1,12 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:starttech_qr/helpers/space.dart';
 import 'package:starttech_qr/screens/qr.dart';
 import 'package:starttech_qr/screens/qr_scan.dart';
@@ -21,6 +23,69 @@ class _HomePageState extends ConsumerState<HomePage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+
+  int _currenIndex = 0;
+
+  CarouselController carouselController = CarouselController();
+
+  List<Widget> get _pages => [
+        customSliderItem(
+          "İnsanlarla Tanış",
+          'Etkinlikte olabildiğince çok kişiyle tanışarak puan kazanabilirsin. Unutma, hepimiz bu etkinliğe yeni insanlar tanıyıp network oluşturmak için katıldık.',
+          1,
+        ),
+        customSliderItem(
+          "QR Okut",
+          "Her tanıştığın kişinin QR kodunu okutarak puan kazanabilirsin. Okuttuğun kod YALNIZCA sana puan kazandırır. Karşındaki kişi de senin kodunu okutarak puan kazanır.",
+          2,
+        ),
+        customSliderItem(
+          "Büyük Hediye",
+          "Etkinlik sonunda en çok puan kazanan kişiye büyük hediye verilecek. Kazanmak için etkinlik boyunca QR kodlarını okutmayı unutma!",
+          3,
+        ),
+      ];
+
+  Widget customSliderItem(String s, String t, int index) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        MediaQuery.of(context).size.width * 0.05,
+        0,
+        MediaQuery.of(context).size.width * 0.05,
+        0,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Lottie.asset(
+            'assets/lottie/animation$index.json',
+            height: MediaQuery.of(context).size.height * 0.4,
+            repeat: false,
+          ),
+          Text(
+            s,
+            style: GoogleFonts.poppins(
+              fontSize: MediaQuery.of(context).size.width * 0.052,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            t,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: MediaQuery.of(context).size.width * 0.03,
+              fontWeight: FontWeight.w400,
+              color: Colors.white60,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,96 +107,97 @@ class _HomePageState extends ConsumerState<HomePage>
             ),
           ),
           onPressed: () {
+            setState(() {
+              _currenIndex = 0;
+              // carouselController.jumpToPage(0);
+            });
             // open bottom sheet
             showModalBottomSheet(
               context: context,
+              isScrollControlled: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(25.0),
+                  topLeft: Radius.circular(25.0),
+                ),
+              ),
               builder: (context) {
-                return Container(
-                  color: const Color(0xff1A1A1A),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text(
-                          'Nasıl çalışır?',
-                          style: GoogleFonts.poppins(
-                            fontSize: MediaQuery.of(context).size.width * 0.05,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                          showCupertinoDialog(
-                            context: context,
-                            builder: (context) {
-                              return CupertinoAlertDialog(
-                                
-                                content: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Bu sayfada sana ait olan QR kodunu görebilir ve yeni tanıştığın kişilerin QR kodunu okutarak onları ekleyebilirsin.'
-                                        '\n\nUnutma, en çok puan alan kişi büyük ödülün sahibi olur.',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      'Kapat',
-                                      style: GoogleFonts.poppins(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.04,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
+                return StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState2) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(25.0),
+                        topLeft: Radius.circular(25.0),
                       ),
-                      ListTile(
-                        title: Text(
-                          'Çıkış yap',
-                          style: GoogleFonts.poppins(
-                            fontSize: MediaQuery.of(context).size.width * 0.05,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onTap: () {
-                          FirebaseAuth.instance.signOut();
-                          Navigator.pushReplacement(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (context) => const QRPage(),
+                      color: Color(0xff1A1A1A),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        // drag indicator and close button on the right top corner
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                              width: 50.0,
+                              height: 5.0,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                );
+                          ),
+                        ),
+
+                        slider(context),
+                        dots(),
+                        const Spacer(),
+
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                minimumSize: Size(
+                                  MediaQuery.of(context).size.width * 0.8,
+                                  MediaQuery.of(context).size.height * 0.07,
+                                ),
+                              ),
+                              onPressed: () {
+                                setState2(() {
+                                  if (_currenIndex < 2) {
+                                    _currenIndex++;
+                                    carouselController.nextPage();
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                });
+                              },
+                              child: Text(
+                                _currenIndex < 2 ? 'İlerle' : 'Kapat',
+                                style: GoogleFonts.poppins(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.04,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SpaceHelper.boslukHeight(context, 0.05),
+                      ],
+                    ),
+                  );
+                });
               },
             );
           },
@@ -180,6 +246,55 @@ class _HomePageState extends ConsumerState<HomePage>
             SpaceHelper.boslukHeight(context, 0.01),
             communityLogos(context),
           ],
+        ),
+      ),
+    );
+  }
+
+  CarouselSlider slider(BuildContext context) {
+    return CarouselSlider(
+      carouselController: carouselController,
+      items: _pages,
+      options: CarouselOptions(
+        onPageChanged: (index, reason) {
+          setState(() {
+            _currenIndex = index;
+          });
+        },
+        height: MediaQuery.of(context).size.height * 0.57,
+
+        viewportFraction: 1,
+        initialPage: 0,
+        enableInfiniteScroll: true,
+        reverse: false,
+        autoPlay: false,
+        // disable scroll
+        scrollPhysics: const NeverScrollableScrollPhysics(),
+        autoPlayInterval: const Duration(seconds: 4),
+        autoPlayAnimationDuration: const Duration(milliseconds: 500),
+        // autoPlayCurve: Curves.fastOutSlowIn,
+        // enlargeCenterPage: true,
+        scrollDirection: Axis.horizontal,
+      ),
+    );
+  }
+
+  Row dots() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        _pages.length,
+        (index) => AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: _currenIndex == index ? 20 : 8,
+          height: 8,
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          decoration: BoxDecoration(
+            color: _currenIndex == index
+                ? Colors.white
+                : Colors.white.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       ),
     );

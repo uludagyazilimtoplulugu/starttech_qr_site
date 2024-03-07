@@ -51,6 +51,7 @@ class AuthService {
       );
       return true;
     } on FirebaseAuthException catch (e) {
+      debugPrint('hata');
       debugPrint(e.toString());
       DialogHelper.getCustomErrorDialog(
         subtitle: e.message.toString(),

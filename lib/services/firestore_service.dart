@@ -242,6 +242,7 @@ class FirestoreService {
     await _db.collection('users').doc(uid).update({
       'point': FieldValue.increment(point),
       'scannedQrCodes': FieldValue.arrayUnion([scannedQrCode]),
+      'updatedAt': DateTime.now(),
     });
   }
 

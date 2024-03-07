@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:starttech_qr/helpers/space.dart';
+import 'package:starttech_qr/screens/auth/login.dart';
 import 'package:starttech_qr/screens/auth/signup.dart';
 import 'package:video_player/video_player.dart';
 
@@ -87,7 +88,14 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
 
   ElevatedButton signInPage(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+        );
+      },
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
         backgroundColor: Colors.grey[900],

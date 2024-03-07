@@ -41,7 +41,100 @@ class _HomePageState extends ConsumerState<HomePage>
               MediaQuery.of(context).size.height * 0.07,
             ),
           ),
-          onPressed: () {},
+          onPressed: () {
+            // open bottom sheet
+            showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return Container(
+                  color: const Color(0xff1A1A1A),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Nasıl çalışır?',
+                          style: GoogleFonts.poppins(
+                            fontSize: MediaQuery.of(context).size.width * 0.05,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          showCupertinoDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                
+                                content: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'Bu sayfada sana ait olan QR kodunu görebilir ve yeni tanıştığın kişilerin QR kodunu okutarak onları ekleyebilirsin.'
+                                        '\n\nUnutma, en çok puan alan kişi büyük ödülün sahibi olur.',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      'Kapat',
+                                      style: GoogleFonts.poppins(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Çıkış yap',
+                          style: GoogleFonts.poppins(
+                            fontSize: MediaQuery.of(context).size.width * 0.05,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onTap: () {
+                          FirebaseAuth.instance.signOut();
+                          Navigator.pushReplacement(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => const QRPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
           child: Text(
             'Nasıl çalışır?',
             style: GoogleFonts.poppins(

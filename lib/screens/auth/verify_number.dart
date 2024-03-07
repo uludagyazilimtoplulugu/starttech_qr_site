@@ -13,7 +13,6 @@ import 'package:starttech_qr/screens/auth/enter_name.dart';
 import 'package:starttech_qr/screens/auth/welcome_page.dart';
 import 'package:starttech_qr/screens/tabbar_main.dart';
 import 'package:starttech_qr/services/firestore_service.dart';
-// import 'package:pinput/pinput.dart';
 
 class VerifyNumberPage extends ConsumerStatefulWidget {
   final String phoneNumber;

@@ -7,27 +7,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:starttech_qr/helpers/dialog.dart';
 import 'package:starttech_qr/helpers/space.dart';
-import 'package:starttech_qr/screens/auth/login.dart';
+import 'package:starttech_qr/screens/auth/signup.dart';
 import 'package:starttech_qr/screens/tabbar_main.dart';
 import 'package:starttech_qr/services/auth_service.dart';
 
-class SignUpWithEmailPage extends ConsumerStatefulWidget {
-  const SignUpWithEmailPage({super.key});
+class SignInWithEmailPage extends ConsumerStatefulWidget {
+  const SignInWithEmailPage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _SignUpWithEmailPageState();
+      _SignInWithEmailPageState();
 }
 
-class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
-  TextEditingController nameController = TextEditingController();
+class _SignInWithEmailPageState extends ConsumerState<SignInWithEmailPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  
+
   bool isLoading = false;
   bool isPasswordVisible = false;
   bool isMailFieldTapped = false;
-  bool isNameFieldTapped = false;
   bool isPasswordFieldTapped = false;
   @override
   Widget build(BuildContext context) {
@@ -72,10 +70,6 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
           bigTitle(context),
           subtitle(context),
           SpaceHelper.boslukHeight(context, 0.03),
-          textFieldLabel(context, 'İsim'),
-          SpaceHelper.boslukHeight(context, 0.008),
-          nameField(context),
-          SpaceHelper.boslukHeight(context, 0.03),
           textFieldLabel(context, 'Mail'),
           SpaceHelper.boslukHeight(context, 0.008),
           emailField(context),
@@ -102,14 +96,14 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
             onTap: () {
               setState(() {
                 isMailFieldTapped = true;
-                isNameFieldTapped = false;
+
                 isPasswordFieldTapped = false;
               });
             },
             onTapOutside: (_) {
               setState(() {
                 isMailFieldTapped = false;
-                isNameFieldTapped = false;
+
                 isPasswordFieldTapped = false;
               });
               FocusScope.of(context).unfocus();
@@ -170,7 +164,7 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
             ),
           ),
           child: Text(
-            'Kayıt Ol',
+            'Giriş Yap',
             style: GoogleFonts.poppins(
               fontSize: MediaQuery.of(context).size.width * 0.035,
               fontWeight: FontWeight.w500,
@@ -183,18 +177,6 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
   }
 
   signUp() async {
-    if (nameController.text.isEmpty) {
-      DialogHelper.getCustomErrorDialog(
-        subtitle: "Adını yazmazsan QR kodunu okutanlar seni tanıyamaz.",
-      );
-      return;
-    }
-    if (nameController.text.length < 3) {
-      DialogHelper.getCustomErrorDialog(
-        subtitle: "Adın en az 3 karakter olmalıdır.",
-      );
-      return;
-    }
     if (emailController.text.isEmpty) {
       DialogHelper.getCustomErrorDialog(
         subtitle: "Mail adresini yazmalısın.",
@@ -228,12 +210,13 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
       setState(() {
         isLoading = true;
         isMailFieldTapped = false;
-        isNameFieldTapped = false;
         isPasswordFieldTapped = false;
       });
 
-      bool? result = await AuthService().signUpWithEmailandPassword(
-        name: nameController.text,
+      debugPrint("email: ${emailController.text}");
+      debugPrint("password: ${passwordController.text}");
+
+      bool? result = await AuthService().signInWithEmailandPassword(
         email: emailController.text,
         password: passwordController.text,
       );
@@ -241,10 +224,7 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
       await FirebaseAuth.instance.currentUser!.reload();
       User? user = FirebaseAuth.instance.currentUser;
       await user!.reload();
-      user.updateDisplayName(nameController.text);
-      user.updatePhotoURL(
-        "https://api.dicebear.com/7.x/adventurer-neutral/png?seed=${user.uid}",
-      );
+
       await FirebaseAuth.instance.currentUser!.reload();
       await user.reload();
 
@@ -261,7 +241,7 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
         );
       } else {
         DialogHelper.getCustomErrorDialog(
-          subtitle: "Kayıt olurken bir hata oluştu.",
+          subtitle: "Giriş yapılamadı.",
         );
       }
     } catch (e) {
@@ -270,59 +250,6 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
       });
       debugPrint("e: $e");
     }
-  }
-
-  nameField(BuildContext context) {
-    return Row(
-      children: [
-        SpaceHelper.boslukWidth(context, 0.05),
-        Expanded(
-          child: CupertinoTextField(
-            onTap: () {
-              setState(() {
-                isNameFieldTapped = true;
-                isMailFieldTapped = false;
-                isPasswordFieldTapped = false;
-              });
-            },
-            onTapOutside: (_) {
-              setState(() {
-                isNameFieldTapped = false;
-                isMailFieldTapped = false;
-                isPasswordFieldTapped = false;
-              });
-              FocusScope.of(context).unfocus();
-            },
-            cursorColor: Colors.white,
-            controller: nameController,
-            padding: const EdgeInsets.all(18.0),
-            placeholder: 'İsmini Gir',
-            placeholderStyle: GoogleFonts.poppins(
-              color: Colors.white.withOpacity(0.3),
-              fontWeight: FontWeight.w400,
-              fontSize: MediaQuery.of(context).size.width * 0.038,
-            ),
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontWeight: FontWeight.w400,
-              fontSize: MediaQuery.of(context).size.width * 0.04,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xff1A1A1A),
-              border: Border.all(
-                color: isNameFieldTapped ? Colors.white : Colors.white54,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            prefixMode: OverlayVisibilityMode.always,
-            keyboardType: TextInputType.name,
-            textInputAction: TextInputAction.done,
-          ),
-        ),
-        SpaceHelper.boslukWidth(context, 0.05),
-      ],
-    );
   }
 
   // passwordField
@@ -336,14 +263,12 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
               setState(() {
                 isPasswordFieldTapped = true;
                 isMailFieldTapped = false;
-                isNameFieldTapped = false;
               });
             },
             onTapOutside: (_) {
               setState(() {
                 isPasswordFieldTapped = false;
                 isMailFieldTapped = false;
-                isNameFieldTapped = false;
               });
               FocusScope.of(context).unfocus();
             },
@@ -399,7 +324,7 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
       children: [
         SpaceHelper.boslukWidth(context, 0.05),
         Text(
-          'Mail adresini girerek hesap oluştur.',
+          'Mail adresini girerek giriş yap.',
           style: GoogleFonts.poppins(
             fontSize: MediaQuery.of(context).size.width * 0.03,
             fontWeight: FontWeight.w400,
@@ -415,7 +340,7 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
       children: [
         SpaceHelper.boslukWidth(context, 0.05),
         Text(
-          'Hesap Oluştur',
+          'Giriş Yap',
           style: GoogleFonts.poppins(
             fontSize: MediaQuery.of(context).size.width * 0.07,
             fontWeight: FontWeight.w600,
@@ -448,7 +373,7 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Zaten bir hesabın var mı?',
+          'Hesabın yok mu?',
           style: GoogleFonts.poppins(
             fontSize: MediaQuery.of(context).size.width * 0.035,
             fontWeight: FontWeight.w400,
@@ -460,12 +385,12 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
             Navigator.push(
               context,
               CupertinoPageRoute(
-                builder: (context) => const LoginPage(),
+                builder: (context) => const SignUpPage(),
               ),
             );
           },
           child: Text(
-            'Giriş Yap',
+            'Kayıt Ol',
             style: GoogleFonts.poppins(
               fontSize: MediaQuery.of(context).size.width * 0.035,
               fontWeight: FontWeight.w600,

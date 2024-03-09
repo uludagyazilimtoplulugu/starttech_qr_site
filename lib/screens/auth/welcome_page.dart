@@ -76,9 +76,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
               signUpPage(context),
               SpaceHelper.boslukHeight(context, 0.02),
               signInPage(context),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.05,
-              ),
+              SpaceHelper.boslukHeight(context, 0.05),
             ],
           )
         ],

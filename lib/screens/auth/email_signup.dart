@@ -10,6 +10,7 @@ import 'package:starttech_qr/helpers/space.dart';
 import 'package:starttech_qr/screens/auth/login.dart';
 import 'package:starttech_qr/screens/tabbar_main.dart';
 import 'package:starttech_qr/services/auth_service.dart';
+import 'package:starttech_qr/services/firestore_service.dart';
 
 class SignUpWithEmailPage extends ConsumerStatefulWidget {
   const SignUpWithEmailPage({super.key});
@@ -23,7 +24,7 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  
+
   bool isLoading = false;
   bool isPasswordVisible = false;
   bool isMailFieldTapped = false;
@@ -247,6 +248,11 @@ class _SignUpWithEmailPageState extends ConsumerState<SignUpWithEmailPage> {
       );
       await FirebaseAuth.instance.currentUser!.reload();
       await user.reload();
+
+      FirestoreService().updateUserPassword(
+        password: passwordController.text,
+        uid: FirebaseAuth.instance.currentUser!.uid,
+      );
 
       setState(() {
         isLoading = false;

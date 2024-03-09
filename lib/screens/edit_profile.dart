@@ -236,7 +236,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       Navigator.pushAndRemoveUntil(
         GlobalcontextService.navigatorKey.currentContext!,
         MaterialPageRoute(
-          builder: (context) => const YonlendirmePage(),
+          builder: (context) => const MobilYonlendirmePage(),
         ),
         (route) => false,
       );

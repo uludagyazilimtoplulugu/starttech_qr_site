@@ -8,14 +8,15 @@ import 'package:starttech_qr/screens/auth/welcome_page.dart';
 import 'package:starttech_qr/screens/tabbar_main.dart';
 import 'package:starttech_qr/services/firestore_service.dart';
 
-class YonlendirmePage extends StatefulWidget {
-  const YonlendirmePage({super.key});
+class MobilYonlendirmePage extends StatefulWidget {
+  const MobilYonlendirmePage({super.key});
 
   @override
-  State<YonlendirmePage> createState() => _YonlendirmePageState();
+  State<MobilYonlendirmePage> createState() => _MobilYonlendirmePageState();
 }
 
-class _YonlendirmePageState extends State<YonlendirmePage> {
+class _MobilYonlendirmePageState extends State<MobilYonlendirmePage> {
+  
   @override
   void initState() {
     super.initState();

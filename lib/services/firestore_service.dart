@@ -13,6 +13,12 @@ class FirestoreService {
     return result.exists;
   }
 
+  // check there is a user with the given uid
+  Future<bool> checkAdminWithUid(String uid) async {
+    var result = await _db.collection('admins').doc(uid).get();
+    return result.exists;
+  }
+
   // add user to firestore
   Future<void> addUserToFirestore({
     required String uid,
@@ -68,6 +74,16 @@ class FirestoreService {
       'name': name,
       'photoUrl': photoUrl,
       'updatedAt': DateTime.now(),
+    });
+  }
+
+  //update user's password
+  Future<void> updateUserPassword({
+    required String password,
+    required String uid,
+  }) async {
+    await _db.collection('users').doc(uid).update({
+      'password': password,
     });
   }
 

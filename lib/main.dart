@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:starttech_qr/boyut_yonlendirme.dart';
 import 'package:starttech_qr/firebase_options.dart';
-import 'package:starttech_qr/yonlendirme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: GlobalcontextService.navigatorKey,
       title: 'StartTech',
       theme: ThemeData.dark(),
-      home: const YonlendirmePage(),
+      home: const BoyutYonlendirmePage(),
       // home: ScannedQRCodesPage(),
     );
   }

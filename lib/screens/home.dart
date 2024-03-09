@@ -152,7 +152,7 @@ class _HomePageState extends ConsumerState<HomePage>
                           ),
                         ),
 
-                        slider(context),
+                        slider(setState2, context),
                         dots(),
                         const Spacer(),
 
@@ -251,34 +251,6 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  CarouselSlider slider(BuildContext context) {
-    return CarouselSlider(
-      carouselController: carouselController,
-      items: _pages,
-      options: CarouselOptions(
-        onPageChanged: (index, reason) {
-          setState(() {
-            _currenIndex = index;
-          });
-        },
-        height: MediaQuery.of(context).size.height * 0.57,
-
-        viewportFraction: 1,
-        initialPage: 0,
-        enableInfiniteScroll: true,
-        reverse: false,
-        autoPlay: false,
-        // disable scroll
-        scrollPhysics: const NeverScrollableScrollPhysics(),
-        autoPlayInterval: const Duration(seconds: 4),
-        autoPlayAnimationDuration: const Duration(milliseconds: 500),
-        // autoPlayCurve: Curves.fastOutSlowIn,
-        // enlargeCenterPage: true,
-        scrollDirection: Axis.horizontal,
-      ),
-    );
-  }
-
   Row dots() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -296,6 +268,37 @@ class _HomePageState extends ConsumerState<HomePage>
             borderRadius: BorderRadius.circular(10),
           ),
         ),
+      ),
+    );
+  }
+
+  CarouselSlider slider(StateSetter setState2, BuildContext context) {
+    return CarouselSlider(
+      carouselController: carouselController,
+      items: _pages,
+      options: CarouselOptions(
+        onPageChanged: (index, reason) {
+          setState(() {
+            setState2(() {
+              carouselController.jumpToPage(index);
+              _currenIndex = index;
+            });
+          });
+        },
+        height: MediaQuery.of(context).size.height * 0.6,
+
+        viewportFraction: 1,
+        initialPage: 0,
+        enableInfiniteScroll: true,
+        reverse: false,
+        autoPlay: false,
+        // disable scroll
+        // scrollPhysics: const NeverScrollableScrollPhysics(),
+        autoPlayInterval: const Duration(seconds: 4),
+        autoPlayAnimationDuration: const Duration(milliseconds: 500),
+        // autoPlayCurve: Curves.fastOutSlowIn,
+        // enlargeCenterPage: true,
+        scrollDirection: Axis.horizontal,
       ),
     );
   }

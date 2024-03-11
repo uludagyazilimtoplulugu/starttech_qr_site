@@ -16,7 +16,7 @@ class MobilYonlendirmePage extends StatefulWidget {
 }
 
 class _MobilYonlendirmePageState extends State<MobilYonlendirmePage> {
-  
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +28,9 @@ class _MobilYonlendirmePageState extends State<MobilYonlendirmePage> {
     return const Scaffold(
       backgroundColor: Colors.black,
       body: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: Colors.white,
+        ),
       ),
     );
   }

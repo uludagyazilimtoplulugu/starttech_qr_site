@@ -100,6 +100,114 @@ class FirestoreService {
     }
   }
 
+  // get all users from firestore
+  Future<List<FirestoreUser>> getAllUsers() async {
+    var result = await _db.collection('users').get();
+    List<FirestoreUser> users = [];
+    for (var doc in result.docs) {
+      users.add(FirestoreUser.fromDoc(doc));
+    }
+    return users;
+  }
+
+  // get all stants from firestore
+  Future<List<CustomQRCode>> getStants() async {
+    var result = await _db
+        .collection('qr_codes')
+        .where('type', isEqualTo: 'stant')
+        .get();
+    List<CustomQRCode> stants = [];
+    for (var doc in result.docs) {
+      stants.add(CustomQRCode.fromDoc(doc));
+    }
+    return stants;
+  }
+
+  // add stant to firestore
+  Future<void> addStantToFirestore({
+    required String title,
+    required String description,
+    required String photoUrl,
+    required int point,
+  }) async {
+    var random = 1000000 + (DateTime.now().millisecondsSinceEpoch % 9000000);
+    var qrCode = random.toString();
+    var result = await _db
+        .collection('qr_codes')
+        .where('qrCode', isEqualTo: qrCode)
+        .get();
+    while (result.docs.isNotEmpty) {
+      random = 1000000 + (DateTime.now().millisecondsSinceEpoch % 9000000);
+      qrCode = random.toString();
+      result = await _db
+          .collection('qr_codes')
+          .where('qrCode', isEqualTo: qrCode)
+          .get();
+    }
+
+    await _db.collection('qr_codes').add({
+      'title': title,
+      'description': description,
+      'photoUrl': photoUrl,
+      'type': 'stant',
+      'point': point,
+      'qrCode': qrCode,
+      'id': '',
+    });
+
+    // update id
+    await _db.collection('qr_codes').where('qrCode', isEqualTo: qrCode).get();
+
+    await _db.collection('qr_codes').doc(result.docs.first.id).update({
+      'id': result.docs.first.id,
+    });
+  }
+
+  // get all speakers from firestore
+  Future<List<CustomQRCode>> getSpeakers() async {
+    var result = await _db
+        .collection('qr_codes')
+        .where('type', isEqualTo: 'speaker')
+        .get();
+    List<CustomQRCode> stants = [];
+    for (var doc in result.docs) {
+      stants.add(CustomQRCode.fromDoc(doc));
+    }
+    return stants;
+  }
+
+  // add stant to firestore
+  Future<void> addSpeakerToFirestore({
+    required String title,
+    required String description,
+    required String photoUrl,
+    required int point,
+  }) async {
+    var random = 1000000 + (DateTime.now().millisecondsSinceEpoch % 9000000);
+    var qrCode = random.toString();
+    var result = await _db
+        .collection('qr_codes')
+        .where('qrCode', isEqualTo: qrCode)
+        .get();
+    while (result.docs.isNotEmpty) {
+      random = 1000000 + (DateTime.now().millisecondsSinceEpoch % 9000000);
+      qrCode = random.toString();
+      result = await _db
+          .collection('qr_codes')
+          .where('qrCode', isEqualTo: qrCode)
+          .get();
+    }
+    await _db.collection('qr_codes').add({
+      'title': title,
+      'description': description,
+      'photoUrl': photoUrl,
+      'point': point,
+      'qrCode': qrCode,
+      'type': 'speaker',
+      'id': '',
+    });
+  }
+
   // did user scan the qrCode before
   Future<bool> didUserScanTheQrCodeBefore({
     required String uid,

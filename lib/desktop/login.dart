@@ -1,8 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:starttech_qr/desktop/desktop_main.dart';
+import 'package:starttech_qr/helpers/dialog.dart';
 import 'package:starttech_qr/helpers/space.dart';
+import 'package:starttech_qr/services/auth_service.dart';
 
 class DesktopAdminLoginPage extends ConsumerStatefulWidget {
   const DesktopAdminLoginPage({super.key});
@@ -21,6 +26,8 @@ class _DesktopAdminLoginPageState extends ConsumerState<DesktopAdminLoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: const Color(0xff1A1A1A),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -192,7 +199,21 @@ class _DesktopAdminLoginPageState extends ConsumerState<DesktopAdminLoginPage> {
         SpaceHelper.boslukWidth(context, 0.35),
         ElevatedButton(
           onPressed: () {
-            // signUp();
+            if (emailController.text.isEmpty ||
+                passwordController.text.isEmpty) {
+              DialogHelper.getCustomErrorDialog(
+                subtitle: 'Lütfen tüm alanları doldurun.',
+              );
+              return;
+            }
+            if (emailController.text != 'admin@uludagdev.org') {
+              DialogHelper.getCustomErrorDialog(
+                subtitle: 'Böyle bir admin bulunmamaktadır.',
+              );
+              return;
+            }
+
+            login();
           },
           style: ElevatedButton.styleFrom(
             side: const BorderSide(
@@ -220,5 +241,37 @@ class _DesktopAdminLoginPageState extends ConsumerState<DesktopAdminLoginPage> {
         SpaceHelper.boslukWidth(context, 0.35),
       ],
     );
+  }
+
+  void login() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      debugPrint("email: ${emailController.text}");
+      debugPrint("password: ${passwordController.text}");
+
+      bool? result = await AuthService().signInWithEmailandPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      setState(() {
+        isLoading = false;
+      });
+      if (result == true) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => const DesktopMainPage(),
+          ),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      debugPrint("login error: $e");
+    }
   }
 }

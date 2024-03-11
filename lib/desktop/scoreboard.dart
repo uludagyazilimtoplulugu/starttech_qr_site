@@ -43,12 +43,6 @@ class _ScoreBoardPageState extends ConsumerState<ScoreBoardPage> {
     });
   }
 
-  void _decrement() {
-    setState(() {
-      _counter--;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

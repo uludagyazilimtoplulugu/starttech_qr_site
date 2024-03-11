@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       title: 'StartTech',
       theme: ThemeData.dark(),
       home: const BoyutYonlendirmePage(),
-      // home: StantlarPage(),
+      // home: ScoreBoardPage(),
     );
   }
 }

@@ -110,6 +110,19 @@ class FirestoreService {
     return users;
   }
 
+  // get all users order by point
+  Future<List<FirestoreUser>> getAllUsersOrderByPoint() async {
+    var result = await _db
+        .collection('users')
+        .orderBy('point', descending: true)
+        .get();
+    List<FirestoreUser> users = [];
+    for (var doc in result.docs) {
+      users.add(FirestoreUser.fromDoc(doc));
+    }
+    return users;
+  }
+
   // get all stants from firestore
   Future<List<CustomQRCode>> getStants() async {
     var result = await _db

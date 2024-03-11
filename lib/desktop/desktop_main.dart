@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:starttech_qr/desktop/all_users.dart';
 import 'package:starttech_qr/desktop/konusmacilar.dart';
+import 'package:starttech_qr/desktop/scoreboard.dart';
 import 'package:starttech_qr/desktop/stantlar.dart';
 import 'package:starttech_qr/helpers/space.dart';
 
@@ -66,7 +67,12 @@ class _DesktopMainPageState extends ConsumerState<DesktopMainPage> {
               ),
             ),
             onPressed: () {
-              // Navigator.pushNamed(context, '/login');
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => const ScoreBoardPage(),
+                ),
+              );
             },
             child: Text(
               'Lider Tablosu',

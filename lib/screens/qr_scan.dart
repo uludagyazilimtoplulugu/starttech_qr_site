@@ -95,14 +95,14 @@ class _QRScanPageState extends ConsumerState<QRScanPage>
           isLoading = false;
         });
         Navigator.pushAndRemoveUntil(
-          context,
+          GlobalcontextService.navigatorKey.currentContext!,
           CupertinoPageRoute(
             builder: (context) => const TabBarMain(),
           ),
           (route) => false,
         );
         Navigator.push(
-          context,
+          GlobalcontextService.navigatorKey.currentContext!,
           CupertinoPageRoute(
             builder: (context) => ScanCompletedPage(
               qrCode: result,

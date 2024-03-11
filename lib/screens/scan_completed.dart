@@ -395,6 +395,7 @@ class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
           );
         },
         height: MediaQuery.of(context).size.height * 0.18,
+        width: MediaQuery.of(context).size.height * 0.18,
         fit: BoxFit.cover,
       ),
     );

@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_qrcode_scanner/flutter_web_qrcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -185,8 +186,12 @@ class _QRScanPageState extends ConsumerState<QRScanPage>
               borderRadius: BorderRadius.circular(10),
             ),
             prefixMode: OverlayVisibilityMode.always,
-            keyboardType: TextInputType.name,
+            keyboardType: TextInputType.number,
             textInputAction: TextInputAction.done,
+            // number input only
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+            ],
           ),
         ),
         SpaceHelper.boslukWidth(context, 0.05),

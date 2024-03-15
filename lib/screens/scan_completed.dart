@@ -406,7 +406,7 @@ class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
     // length
     if (widget.qrCode.trim().length == 6) {
       // kullanıcı taratma
-      return 1;
+      return 5;
     } else {
       // get point from firestore
       FirestoreService()

@@ -102,7 +102,10 @@ class FirestoreService {
 
   // get all users from firestore
   Future<List<FirestoreUser>> getAllUsers() async {
-    var result = await _db.collection('users').get();
+    var result = await _db
+        .collection('users')
+        .orderBy('createdAt', descending: true)
+        .get();
     List<FirestoreUser> users = [];
     for (var doc in result.docs) {
       users.add(FirestoreUser.fromDoc(doc));
@@ -112,10 +115,8 @@ class FirestoreService {
 
   // get all users order by point
   Future<List<FirestoreUser>> getAllUsersOrderByPoint() async {
-    var result = await _db
-        .collection('users')
-        .orderBy('point', descending: true)
-        .get();
+    var result =
+        await _db.collection('users').orderBy('point', descending: true).get();
     List<FirestoreUser> users = [];
     for (var doc in result.docs) {
       users.add(FirestoreUser.fromDoc(doc));

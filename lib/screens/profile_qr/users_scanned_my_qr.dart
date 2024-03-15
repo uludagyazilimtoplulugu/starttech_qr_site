@@ -60,6 +60,7 @@ class _UsersScannesMyQRPageState extends ConsumerState<UsersScannesMyQRPage> {
             if (users.isEmpty) {
               return Text(
                 'Henüz kimse QR kodunuzu tarayıp puan kazanmamış.',
+                textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(
                   fontSize: MediaQuery.of(context).size.width * 0.05,
                   fontWeight: FontWeight.w400,

@@ -48,7 +48,9 @@ class _QRScanPageState extends ConsumerState<QRScanPage>
                   color: Colors.white,
                 ),
               ),
-              backgroundColor: const Color(0xff1A1A1A),
+              backgroundColor: isLoading
+                  ? Colors.black.withOpacity(0.5)
+                  : const Color(0xff1A1A1A),
               leading: Navigator.canPop(context)
                   ? IconButton(
                       icon: const Icon(Icons.arrow_back_ios),
@@ -84,17 +86,23 @@ class _QRScanPageState extends ConsumerState<QRScanPage>
       cameraDirection: CameraDirection.back,
       height: MediaQuery.of(context).size.height * 0.5,
       stopOnFirstResult: true,
-      onGetResult: (result) {
-        // close kehboard
-        FocusScope.of(context).unfocus();
+      onGetResult: (result) async {
         setState(() {
           isLoading = true;
         });
+        // close kehboard
+        FocusScope.of(context).unfocus();
 
-        Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 2000));
+
         setState(() {
           isLoading = false;
         });
+
+        if (GlobalcontextService.navigatorKey.currentContext == null) {
+          return;
+        }
+
         Navigator.pushAndRemoveUntil(
           GlobalcontextService.navigatorKey.currentContext!,
           CupertinoPageRoute(

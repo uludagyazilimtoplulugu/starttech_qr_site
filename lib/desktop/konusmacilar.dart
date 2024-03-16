@@ -103,7 +103,7 @@ class _KonusmacilarPageState extends ConsumerState<KonusmacilarPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Stantlar',
+          'Konuşmacılar',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w400,
             color: Colors.white,

@@ -21,7 +21,20 @@ class ScanCompletedPage extends ConsumerStatefulWidget {
 
 class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
     with AutomaticKeepAliveClientMixin {
-  bool isLoading = false;
+  @override
+  bool get wantKeepAlive => true;
+
+  bool isLoading = true;
+  bool isError = false;
+  bool userNotFound = false;
+  bool alreadyExists = false;
+  bool isSameUser = false;
+  bool isPersonQrCode = false;
+  bool increasedPoint = false;
+
+  FirestoreUser? user;
+  CustomQRCode? customQRCode;
+
   late ConfettiController _controllerCenterLeft;
 
   List<Color> confettiColors = [
@@ -36,11 +49,9 @@ class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
   ];
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   void dispose() {
     _controllerCenterLeft.dispose();
+
     super.dispose();
   }
 
@@ -50,6 +61,25 @@ class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
 
     _controllerCenterLeft =
         ConfettiController(duration: const Duration(milliseconds: 1300));
+
+    debugPrint('widget.qrCode: ${widget.qrCode}');
+
+    updatePoint();
+  }
+
+  Widget loadingWidget() {
+    return isLoading
+        ? Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.black.withOpacity(0.5),
+            child: const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            ),
+          )
+        : const SizedBox();
   }
 
   @override
@@ -61,135 +91,236 @@ class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
         resizeToAvoidBottomInset: false,
         backgroundColor: const Color(0xff1A1A1A),
         appBar: AppBar(
-          backgroundColor: const Color(0xff1A1A1A),
+          backgroundColor: isLoading
+              ? Colors.black.withOpacity(0.5)
+              : const Color(0xff1A1A1A),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
-              // Navigator.pushAndRemoveUntil(
-              //   context,
-              //   CupertinoPageRoute(
-              //     builder: (context) => const TabBarMain(),
-              //   ),
-              //   (route) => false,
-              // );
-              // pop
               Navigator.pop(context);
             },
           ),
         ),
         body: Stack(
           children: [
-            FutureBuilder(
-              future: updatePoint(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.data == null) {
-                    return userNotFound(context);
-                  }
-                  if (snapshot.data == 'already-exists') {
-                    return alreadyExists(context);
-                  }
-                  if (snapshot.data == 'same-user') {
-                    FirestoreUser? user = snapshot.data;
-
-                    return sameUser(context, user);
-                  }
-                  debugPrint('snapshot.data: ${snapshot.data}');
-                  if (snapshot.data.runtimeType == FirestoreUser) {
-                    FirestoreUser? user = snapshot.data;
-                    _controllerCenterLeft.play();
-
-                    return created(context, user);
-                  }
-                  if (snapshot.data.runtimeType == CustomQRCode) {
-                    CustomQRCode? customQRCode = snapshot.data;
-                    _controllerCenterLeft.play();
-
-                    return createdCustomQR(context, customQRCode);
-                  }
-                  FirestoreUser? user = snapshot.data;
-                  _controllerCenterLeft.play();
-
-                  return created(context, user);
-                }
-                return loading();
-              },
-            ),
+            getBody(),
             _getConfetti,
           ],
         ),
+        // body: isLoading
+        //     ? loadingWidget()
+        //     : Stack(
+        //         children: [
+        //           FutureBuilder(
+        //             future: updatePoint(),
+        //             builder: (BuildContext context, AsyncSnapshot snapshot) {
+        //               if (snapshot.connectionState == ConnectionState.done) {
+        //                 if (snapshot.data == null) {
+        //                   return userNotFoundBody(context);
+        //                 }
+        //                 if (snapshot.data == 'already-exists') {
+        //                   return alreadyExistsBody(context);
+        //                 }
+        //                 if (snapshot.data == 'same-user') {
+        //                   return sameUserBody(context);
+        //                 }
+        //                 debugPrint('snapshot.data: ${snapshot.data}');
+        //                 if (snapshot.data.runtimeType == FirestoreUser) {
+        //                   FirestoreUser? user = snapshot.data;
+        //                   _controllerCenterLeft.play();
+
+        //                   return createdBody(context, user);
+        //                 }
+        //                 if (snapshot.data.runtimeType == CustomQRCode) {
+        //                   CustomQRCode? customQRCode = snapshot.data;
+        //                   _controllerCenterLeft.play();
+
+        //                   return createdCustomQR(context, customQRCode);
+        //                 }
+        //                 FirestoreUser? user = snapshot.data;
+        //                 _controllerCenterLeft.play();
+
+        //                 return createdBody(context, user);
+        //               }
+        //               return loadingWidget();
+        //             },
+        //           ),
+        //           _getConfetti,
+        //         ],
+        //       ),
       ),
     );
   }
 
-  Future updatePoint() async {
-    if (widget.qrCode.length == 6) {
-      bool isScannedBefore =
-          await FirestoreService().didUserScanTheQrCodeBefore(
-        uid: FirebaseAuth.instance.currentUser!.uid,
-        qrCode: widget.qrCode,
+  Widget getBody() {
+    if (isLoading) {
+      return loadingWidget();
+    }
+    if (isError) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Bir hata oluştu. Lütfen tekrar deneyin.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: MediaQuery.of(context).size.width * 0.05,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
       );
-      if (isScannedBefore) {
-        // kullanıcı daha önce taratmış
-        return 'already-exists';
-      } else {
-        FirestoreUser? user = await FirestoreService().getUserWithQrCode(
-          qrCode: widget.qrCode,
-        );
-        if (user == null) {
-          return null;
-        }
-        if (FirebaseAuth.instance.currentUser!.uid == user.uid) {
-          return 'same-user';
-        }
-        await FirestoreService().updateUserPointAndScannedQrCodes(
-          uid: FirebaseAuth.instance.currentUser!.uid,
-          scannedQrCode: widget.qrCode,
-          point: getPoint(),
-        );
-        return user;
-      }
+    }
+    debugPrint('a');
+    if (userNotFound) {
+      return userNotFoundBody(context);
+    }
+    debugPrint('b');
+    if (alreadyExists) {
+      return alreadyExistsBody(context);
+    }
+    debugPrint('c');
+    if (isSameUser) {
+      return sameUserBody(context);
+    }
+    debugPrint('d');
+    if (isPersonQrCode) {
+      debugPrint('e');
+      _controllerCenterLeft.play();
+      return createdBody(context, user);
     } else {
-      // custom qr code
-      CustomQRCode? qrCode = await FirestoreService()
-          .getCustomQRWithQRCode(qrCode: widget.qrCode)
-          .then((value) {
-        if (value != null) {
-          return value;
-        }
-        return null;
-      });
-      if (qrCode == null) {
-        return null;
-      }
-      bool isScannedBefore =
-          await FirestoreService().didUserScanTheQrCodeBefore(
-        uid: FirebaseAuth.instance.currentUser!.uid,
-        qrCode: widget.qrCode,
-      );
-      if (isScannedBefore) {
-        // kullanıcı daha önce taratmış
-        return 'already-exists';
-      } else {
-        await FirestoreService().updateUserPointAndScannedQrCodes(
-          uid: FirebaseAuth.instance.currentUser!.uid,
-          scannedQrCode: widget.qrCode,
-          point: qrCode.point,
-        );
-        return qrCode;
-      }
+      debugPrint('f');
+      _controllerCenterLeft.play();
+      return createdCustomQR(context, customQRCode);
     }
   }
 
-  Center loading() {
-    return const Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-      ),
-    );
+  updatePoint() async {
+    try {
+      if (widget.qrCode.length == 6) {
+        bool isScannedBefore =
+            await FirestoreService().didUserScanTheQrCodeBefore(
+          uid: FirebaseAuth.instance.currentUser!.uid,
+          qrCode: widget.qrCode,
+        );
+        if (isScannedBefore) {
+          // kullanıcı daha önce taratmış
+          if (mounted) {
+            setState(() {
+              alreadyExists = true;
+              isLoading = false;
+            });
+          }
+          return;
+        } else {
+          FirestoreUser? user = await FirestoreService().getUserWithQrCode(
+            qrCode: widget.qrCode,
+          );
+          if (user == null) {
+            if (mounted) {
+              setState(() {
+                userNotFound = true;
+                isLoading = false;
+              });
+            }
+            return;
+          }
+          if (FirebaseAuth.instance.currentUser!.uid == user.uid) {
+            // kullanıcı kendi qr kodunu taratmış
+            if (mounted) {
+              setState(() {
+                isSameUser = true;
+                isLoading = false;
+              });
+            }
+            return;
+          }
+          if (!increasedPoint) {
+            await Future.delayed(const Duration(milliseconds: 1000));
+
+            await FirestoreService().updateUserPointAndScannedQrCodes(
+              uid: FirebaseAuth.instance.currentUser!.uid,
+              scannedQrCode: widget.qrCode,
+              point: getPoint(),
+            );
+            if (mounted) {
+              setState(() {
+                increasedPoint = true;
+              });
+            }
+          }
+          if (mounted) {
+            setState(() {
+              this.user = user;
+              isLoading = false;
+              isPersonQrCode = true;
+            });
+          }
+        }
+      } else {
+        // custom qr code
+        CustomQRCode? qrCode = await FirestoreService()
+            .getCustomQRWithQRCode(qrCode: widget.qrCode)
+            .then((value) {
+          if (value != null) {
+            return value;
+          }
+          return null;
+        });
+        if (qrCode == null) {
+          if (mounted) {
+            setState(() {
+              userNotFound = true;
+              isLoading = false;
+            });
+          }
+          return;
+        }
+        bool isScannedBefore =
+            await FirestoreService().didUserScanTheQrCodeBefore(
+          uid: FirebaseAuth.instance.currentUser!.uid,
+          qrCode: widget.qrCode,
+        );
+        if (isScannedBefore) {
+          // kullanıcı daha önce taratmış
+          if (mounted) {
+            setState(() {
+              alreadyExists = true;
+              isLoading = false;
+            });
+          }
+        } else {
+          if (!increasedPoint) {
+            await Future.delayed(const Duration(milliseconds: 1000));
+            await FirestoreService().updateUserPointAndScannedQrCodes(
+              uid: FirebaseAuth.instance.currentUser!.uid,
+              scannedQrCode: widget.qrCode,
+              point: qrCode.point,
+            );
+
+            setState(() {
+              increasedPoint = true;
+            });
+          }
+          if (mounted) {
+            setState(() {
+              customQRCode = qrCode;
+              isLoading = false;
+              isPersonQrCode = false;
+            });
+          }
+        }
+      }
+    } catch (e) {
+      setState(() {
+        isError = true;
+        isLoading = false;
+      });
+    }
   }
 
-  Center userNotFound(BuildContext context) {
+  Center userNotFoundBody(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -206,7 +337,7 @@ class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
     );
   }
 
-  Widget alreadyExists(BuildContext context) {
+  Widget alreadyExistsBody(BuildContext context) {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -254,7 +385,7 @@ class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
     );
   }
 
-  SingleChildScrollView created(BuildContext context, FirestoreUser? user) {
+  SingleChildScrollView createdBody(BuildContext context, FirestoreUser? user) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -420,7 +551,7 @@ class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
     return 0;
   }
 
-  Widget sameUser(BuildContext context, FirestoreUser? user) {
+  Widget sameUserBody(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -466,25 +597,6 @@ class _ScanCompletedPageState extends ConsumerState<ScanCompletedPage>
             //     }
             //   },
             // ),
-
-            FutureBuilder(
-              future: FirestoreService()
-                  .getUser(uid: FirebaseAuth.instance.currentUser!.uid),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  return Text(
-                    "Güncel puanın: ${snapshot.data}",
-                    style: GoogleFonts.poppins(
-                      color: Colors.white70,
-                      fontSize: MediaQuery.of(context).size.width * 0.04,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  );
-                } else {
-                  return const SizedBox();
-                }
-              },
-            ),
           ],
         ),
       ),
